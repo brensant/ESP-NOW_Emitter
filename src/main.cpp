@@ -1,16 +1,7 @@
+#include "comms.h"
+
 #include <esp_now.h>
 #include <WiFi.h>
-
-#define ESPNOW_CHANNEL 0
-
-// Estrutura dos dados enviados
-typedef struct s_data
-{
-	char a[32];
-	int b;
-	float c;
-	bool d;
-} t_data;
 
 esp_now_peer_info_t g_peer_info = {
 	.peer_addr = { 0xA0, 0xA3, 0xB3, 0x29, 0x38, 0x14 }, // Endereço MAC do robô
