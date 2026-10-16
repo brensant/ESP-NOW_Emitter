@@ -1,46 +1,44 @@
 #include "comms.h"
-#include "emitter.h"
-
 #include "Controller.h"
+#include "Emitter.h"
 
+#include <Arduino.h>
 #include <WiFi.h>
-#include <esp_now.h>
+
+static constexpr uint32_t SEND_PERIOD_MS = 20; // 50 Hz
+static const uint8_t      RECEIVER[] = RECEIVER_MAC;
 
 Controller g_controller;
+Emitter    g_emitter(RECEIVER);
+bool       g_ready = false;
+uint32_t   g_lastSend = 0;
 
 void setup()
 {
-	g_controller.init();
-
 	Serial.begin(9600);
 	WiFi.mode(WIFI_STA);
 
-	pinMode(BUTTON_PIN, INPUT_PULLUP);
-	attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), onButtonPress, FALLING);
-
-	if (initEspNow() != ESP_OK)
-		return;
+	g_controller.init();
+	g_ready = (g_emitter.init() == ESP_OK);
 }
 
 void loop()
 {
-	if (g_buttonState) {
-		Serial.println("Botão pressionado\n");
-		g_data.value = !g_data.value;
+	if (!g_ready)
+		return;
 
-		// Send message via ESP-NOW
-		esp_err_t result = esp_now_send(g_peerInfo.peer_addr, (uint8_t*)&g_data, sizeof g_data);
+	uint32_t now = millis();
 
-		if (result == ESP_OK) {
-			Serial.println("Sent with success");
-		} else {
-			Serial.println("Error sending the data");
-		}
+	if (now - g_lastSend < SEND_PERIOD_MS)
+		return;
 
-		g_buttonState = LOW;
+	g_lastSend = now;
 
-		attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), onButtonPress, FALLING);
-	}
+	t_ctrl_pckt pckt = {};
+	pckt.steering = g_controller.getX();
+	pckt.throttle = g_controller.getY();
+	pckt.flags.isWeaponEnabled = g_controller.isButtonPressed();
 
-	delay(10);
+	if (g_emitter.send(pckt) != ESP_OK)
+		Serial.println("Error sending the data");
 }
