@@ -1,11 +1,17 @@
 #include "comms.h"
 #include "emitter.h"
 
+#include "Controller.h"
+
 #include <WiFi.h>
 #include <esp_now.h>
 
+Controller g_controller;
+
 void setup()
 {
+	g_controller.init();
+
 	Serial.begin(9600);
 	WiFi.mode(WIFI_STA);
 

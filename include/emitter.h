@@ -15,7 +15,7 @@ esp_err_t initEspNow();
 void onButtonPress();
 
 extern const esp_now_peer_info_t g_peerInfo;
-extern t_espnow_data             g_data;
+extern t_ctrl_pckt               g_data;
 extern volatile bool             g_buttonState;
 
 #endif // EMITTER_H

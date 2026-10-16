@@ -3,9 +3,12 @@
 #include <Arduino.h>
 
 const esp_now_peer_info_t g_peerInfo = { .peer_addr = RECEIVER_MAC };
-t_espnow_data             g_data;
+t_ctrl_pckt               g_data;
 volatile bool             g_buttonState = LOW;
 
+/**
+ * Callback de envio. Executa toda vez que um pacote é enviado.
+ */
 void sendCallback(const uint8_t* mac_addr, esp_now_send_status_t status)
 {
 	Serial.printf("\r\nLast Packet Send Status:\t%s\n",
