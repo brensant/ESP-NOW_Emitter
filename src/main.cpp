@@ -37,7 +37,8 @@ void loop()
 	t_ctrl_pckt pckt = {};
 	pckt.steering = g_controller.getX();
 	pckt.throttle = g_controller.getY();
-	pckt.flags.isWeaponEnabled = g_controller.isButtonPressed();
+	pckt.flags.isWheelsEnabled = 1; // provisório
+	pckt.flags.isWeaponEnabled = g_controller.isButtonPressed(); // provisório, implementar toggle depois
 
 	if (g_emitter.send(pckt) != ESP_OK)
 		Serial.println("Error sending the data");
