@@ -13,10 +13,6 @@ Controller::Controller(int xPin, int yPin, int buttonPin)
 {
 }
 
-Controller::~Controller()
-{
-}
-
 /************************ NON-STATIC MEMBER FUNCTIONS *************************/
 
 /*
@@ -30,6 +26,9 @@ void Controller::init()
 	calibrate();
 }
 
+/**
+ * Mede o ponto central. Chamar com o stick solto.
+ */
 void Controller::calibrate()
 {
 	m_centerX = readAverage(m_xPin, 64);
@@ -50,8 +49,6 @@ bool Controller::isButtonPressed() const
 {
 	return (digitalRead(m_buttonPin) == LOW); // INPUT_PULLUP: pressionado = LOW
 }
-
-/****************************** HELPER FUNCTIONS ******************************/
 
 /*
  * Calcula uma média das leituras para diminuir o ruído do ESP32.

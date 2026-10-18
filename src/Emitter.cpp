@@ -15,10 +15,6 @@ Emitter::Emitter(const uint8_t* peerMac)
 	m_peer.encrypt = false;
 }
 
-Emitter::~Emitter()
-{
-}
-
 /************************** STATIC MEMBER FUNCTIONS ***************************/
 
 void Emitter::onSent(const uint8_t* macAddr, esp_now_send_status_t status)
