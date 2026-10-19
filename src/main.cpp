@@ -1,5 +1,5 @@
 #include "comms.h"
-#include "Controller.h"
+#include "Joystick.h"
 #include "Emitter.h"
 
 #include <Arduino.h>
@@ -8,24 +8,27 @@
 static constexpr uint32_t SEND_PERIOD_MS = 20; // 50 Hz
 static const uint8_t      RECEIVER[] = RECEIVER_MAC;
 
-Controller g_controller;
-Emitter    g_emitter(RECEIVER);
-bool       g_ready = false;
-uint32_t   g_lastSend = 0;
+Joystick g_joystick;
+Emitter  g_emitter(RECEIVER);
+bool     g_ready = false;
+uint32_t g_lastSend = 0;
 
 void setup()
 {
 	Serial.begin(9600);
 	WiFi.mode(WIFI_STA);
 
-	g_controller.init();
+	g_joystick.init();
 	g_ready = (g_emitter.init() == ESP_OK);
 }
 
 void loop()
 {
-	if (!g_ready)
+	if (!g_ready) {
+		Serial.println("Erro ao iniciar emissor");
+		delay(1000);
 		return;
+	}
 
 	uint32_t now = millis();
 
@@ -34,12 +37,11 @@ void loop()
 
 	g_lastSend = now;
 
-	t_ctrl_pckt pckt = {};
-	pckt.steering = g_controller.getX();
-	pckt.throttle = g_controller.getY();
-	pckt.flags.isWheelsEnabled = 1; // provisório
-	pckt.flags.isWeaponEnabled = g_controller.isButtonPressed(); // provisório, implementar toggle depois
+	t_ctrl_pckt packet = {};
+	packet.steering = g_joystick.getX();
+	packet.throttle = g_joystick.getY();
+	packet.button = g_joystick.isButtonPressed();
 
-	if (g_emitter.send(pckt) != ESP_OK)
+	if (g_emitter.send(packet) != ESP_OK)
 		Serial.println("Error sending the data");
 }

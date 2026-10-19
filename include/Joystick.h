@@ -1,18 +1,18 @@
-#ifndef CONTROLLER_HPP
-# define CONTROLLER_HPP
+#ifndef JOYSTICK_H
+# define JOYSTICK_H
 
 # include <cstdint>
 
-# define CONTROLLER_VRX_PIN 0 // Pino eixo X (analógico)
-# define CONTROLLER_VRY_PIN 1 // Pino eixo Y (analógico)
-# define CONTROLLER_SW_PIN  2 // Pino botão  (digital)
+# define JOYSTICK_VRX_PIN 0 // Pino eixo X (analógico)
+# define JOYSTICK_VRY_PIN 1 // Pino eixo Y (analógico)
+# define JOYSTICK_SW_PIN  2 // Pino botão  (digital)
 
-class Controller {
+class Joystick {
   public:
 	static constexpr uint16_t ADC_MAX  = 4095; // ADC de 12 bits
 	static constexpr uint16_t DEADZONE = 150;  // zona morta ao redor do centro (em contagens do ADC)
 
-	Controller(int xPin = CONTROLLER_VRX_PIN, int yPin = CONTROLLER_VRY_PIN, int buttonPin = CONTROLLER_SW_PIN);
+	Joystick(int xPin = JOYSTICK_VRX_PIN, int yPin = JOYSTICK_VRY_PIN, int buttonPin = JOYSTICK_SW_PIN);
 
 	void init();
 	void calibrate();
@@ -33,4 +33,4 @@ class Controller {
 	uint16_t m_centerY;
 };
 
-#endif // CONTROLLER_HPP
+#endif // JOYSTICK_H
